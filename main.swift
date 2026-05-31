@@ -23,7 +23,7 @@ final class Controller: NSObject, NSApplicationDelegate, NSMenuDelegate {
         statusItem.menu = menu
     }
 
-    private func minutesLabel(_ m: Int) -> String { m == 0 ? "Không bao giờ" : "\(m) phút" }
+    private func minutesLabel(_ m: Int) -> String { m == 0 ? "Never" : "\(m) min" }
 
     // Repopulate from live state every time the menu opens, so checkmarks and the
     // summary always reflect the current pmset/launchctl values (no stale display).
@@ -31,24 +31,24 @@ final class Controller: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let state = readState()
         menu.removeAllItems()
 
-        let display = NSMenuItem(title: "Tắt màn hình sau", action: nil, keyEquivalent: "")
+        let display = NSMenuItem(title: "Turn display off after", action: nil, keyEquivalent: "")
         display.submenu = optionsMenu(displayOptions, current: state.displaySleep,
                                       action: #selector(setDisplaySleep(_:)))
         menu.addItem(display)
 
-        let sleep = NSMenuItem(title: "Máy ngủ sau", action: nil, keyEquivalent: "")
+        let sleep = NSMenuItem(title: "Sleep after", action: nil, keyEquivalent: "")
         sleep.submenu = optionsMenu(sleepOptions, current: state.systemSleep,
                                     action: #selector(setSystemSleep(_:)))
         menu.addItem(sleep)
 
         let summary = NSMenuItem(
-            title: "Hiện tại (sạc): màn \(minutesLabel(state.displaySleep)) · ngủ \(minutesLabel(state.systemSleep))",
+            title: "Current (AC): display \(minutesLabel(state.displaySleep)) · sleep \(minutesLabel(state.systemSleep))",
             action: nil, keyEquivalent: "")
         summary.isEnabled = false
         menu.addItem(summary)
 
         menu.addItem(.separator())
-        let login = NSMenuItem(title: "Khởi động cùng đăng nhập",
+        let login = NSMenuItem(title: "Start at login",
                                action: #selector(toggleLogin), keyEquivalent: "")
         login.target = self
         login.state = isLoginEnabled() ? .on : .off
