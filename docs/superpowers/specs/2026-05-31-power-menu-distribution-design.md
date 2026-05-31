@@ -27,6 +27,10 @@ Homebrew, and `npx`.
   `power-menu` (verified available); Homebrew tap `minhnhat08/homebrew-tap`;
   app name `PowerMenu`; bundle id `com.minhnhat.powermenu` (unchanged);
   LaunchAgent label `com.minhnhat.powermenu` (unchanged).
+- **Public repos.** Both `power-menu` and `homebrew-tap` are public. Frictionless
+  installs require publicly downloadable release assets and a public raw
+  `install.sh` URL; GitHub does not serve private releases or raw files without
+  auth. The source contains no secrets, so public exposure is safe.
 
 ### Known gap to fix
 
