@@ -37,6 +37,9 @@ async function install(version) {
       'utf8'
     );
     const expected = sumText.trim().split(/\s+/)[0];
+    if (!expected || expected.length !== 64) {
+      throw new Error('SHA-256 checksum file is missing or malformed');
+    }
     const actual = sha256(zip);
     if (expected !== actual) {
       throw new Error(`Checksum mismatch: expected ${expected}, got ${actual}`);
@@ -50,7 +53,11 @@ async function install(version) {
     fs.mkdirSync(p.appDir, { recursive: true });
 
     execFileSync('/usr/bin/ditto', ['-x', '-k', zipPath, tmp]);
-    fs.renameSync(path.join(tmp, 'PowerMenu.app'), p.appDest);
+    const extracted = path.join(tmp, 'PowerMenu.app');
+    if (!fs.existsSync(extracted)) {
+      throw new Error('Extraction failed: PowerMenu.app not found in archive');
+    }
+    fs.renameSync(extracted, p.appDest);
     execFileSync('/usr/bin/xattr', [
       '-dr',
       'com.apple.quarantine',
@@ -65,8 +72,12 @@ async function install(version) {
       p.plistPath,
     ]);
 
-    execFileSync('/usr/bin/open', [p.appDest]);
     console.log(`Installed to ${p.appDest}`);
+    try {
+      execFileSync('/usr/bin/open', [p.appDest]);
+    } catch {
+      console.log(`Could not auto-launch. Open it manually: open "${p.appDest}"`);
+    }
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }

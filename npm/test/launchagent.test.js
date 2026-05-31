@@ -13,4 +13,5 @@ test('renderPlist embeds the label, executable path, and RunAtLoad', () => {
     /<string>\/Users\/test\/Applications\/PowerMenu\.app\/Contents\/MacOS\/PowerMenu<\/string>/
   );
   assert.match(xml, /<key>RunAtLoad<\/key><true\/>/);
+  assert.match(xml, /<key>KeepAlive<\/key><false\/>/);
 });
