@@ -4,3 +4,6 @@
 # Build output (installed to ~/Applications by build.sh)
 *.app/
 build/
+
+# Universal build output (scripts/build-app.sh)
+dist/
