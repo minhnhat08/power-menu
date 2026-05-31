@@ -1,0 +1,6 @@
+# macOS
+.DS_Store
+
+# Build output (installed to ~/Applications by build.sh)
+*.app/
+build/
