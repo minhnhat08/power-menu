@@ -35,7 +35,9 @@ rm -rf "$APP_DEST"
 mkdir -p "$HOME/Applications"
 ditto -x -k "$tmp/$ZIP" "$tmp/extracted"
 ditto "$tmp/extracted/PowerMenu.app" "$APP_DEST"
-xattr -dr com.apple.quarantine "$APP_DEST" || true
+# Use the absolute system path: a PyPI `xattr` shim on PATH lacks -r and would
+# silently fail to strip quarantine, re-triggering the Gatekeeper warning.
+/usr/bin/xattr -dr com.apple.quarantine "$APP_DEST" || true
 
 echo "Setting up Start at login..."
 mkdir -p "$HOME/Library/LaunchAgents"
