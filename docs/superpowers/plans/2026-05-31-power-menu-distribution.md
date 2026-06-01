@@ -122,7 +122,7 @@ Expected: no output (exit code 1).
 - [ ] **Step 4: Build and verify the app still compiles and runs**
 
 Run: `bash build.sh && open ~/Applications/PowerMenu.app`
-Expected: build succeeds, the ⚡ menu-bar icon appears, and the menu shows English labels ("Turn display off after", "Sleep after", "Never", "Start at login", "Quit").
+Expected: build succeeds, the menu-bar icon appears, and the menu shows English labels ("Turn display off after", "Sleep after", "Never", "Start at login", "Quit").
 
 - [ ] **Step 5: Commit**
 
@@ -338,7 +338,7 @@ rm -rf "$APP_DEST"
 mkdir -p "$HOME/Applications"
 ditto -x -k "$tmp/$ZIP" "$tmp/extracted"
 ditto "$tmp/extracted/PowerMenu.app" "$APP_DEST"
-xattr -dr com.apple.quarantine "$APP_DEST" || true
+/usr/bin/xattr -dr com.apple.quarantine "$APP_DEST" || true
 
 echo "Setting up Start at login..."
 mkdir -p "$HOME/Library/LaunchAgents"
@@ -358,7 +358,7 @@ PLIST
 launchctl bootstrap "$DOMAIN" "$PLIST"
 
 open "$APP_DEST"
-echo "PowerMenu installed. The ⚡ icon should be in your menu bar."
+echo "PowerMenu installed. The icon should be in your menu bar."
 ```
 
 - [ ] **Step 2: Make it executable**
@@ -454,6 +454,9 @@ This task uses TDD for the two pure helper modules (`config.js`, `launchagent.js
   "os": [
     "darwin"
   ],
+  "engines": {
+    "node": ">=22"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -1031,7 +1034,7 @@ brew style --cask Casks/power-menu.rb
 brew install --cask ./Casks/power-menu.rb
 test -d "/Applications/PowerMenu.app" -o -d "$HOME/Applications/PowerMenu.app" && echo "cask install OK"
 ```
-Expected: `brew style` passes, install succeeds, prints `cask install OK`, and the ⚡ icon appears with no Gatekeeper warning.
+Expected: `brew style` passes, install succeeds, prints `cask install OK`, and the bolt icon appears with no Gatekeeper warning.
 
 - [ ] **Step 5: Commit and push the tap**
 
@@ -1060,7 +1063,7 @@ Expected: lists `PowerMenu.app.zip` and `PowerMenu.app.zip.sha256`.
 - [ ] **A2: Install script path**
 
 Run: `curl -fsSL https://raw.githubusercontent.com/minhnhat08/power-menu/main/install.sh | bash`
-Expected: downloads, verifies checksum, the ⚡ icon appears with **no** Gatekeeper warning, menu is in English. Then run the `uninstall.sh` one-liner and confirm `~/Applications/PowerMenu.app` and the plist are gone.
+Expected: downloads, verifies checksum, the bolt icon appears with **no** Gatekeeper warning, menu is in English. Then run the `uninstall.sh` one-liner and confirm `~/Applications/PowerMenu.app` and the plist are gone.
 
 - [ ] **A3: npx path**
 
@@ -1078,4 +1081,21 @@ Confirm all three channels install to `~/Applications/PowerMenu.app` (Homebrew m
 - **Spec coverage:** UI→English (Task 1), universal build (Task 2), build.sh refactor (Task 3), LaunchAgent generation (Tasks 4/5/7/10), install script + uninstall (Tasks 5/6), npx package (Task 7), CI build+release+publish (Task 8), README three methods (Task 9), Homebrew tap/cask (Task 10), public-repo + NPM_TOKEN prerequisites (Prerequisites + Task 8 Step 4). Error handling (macOS guard, checksum verify, safe replace) is in install.sh, uninstall.sh, and install.js. Testing (shellcheck, lipo/codesign, manual acceptance) is in Task 8 and Final acceptance.
 - **Naming consistency:** asset names (`PowerMenu.app.zip`, `PowerMenu.app.zip.sha256`), label (`com.minhnhat.powermenu`), bundle id, repo (`minhnhat08/power-menu`), tap (`minhnhat08/homebrew-tap`), and npm name (`power-menu`) are identical across all tasks. The "latest release redirect" URL is used by `install.sh`; the version-pinned `releases/download/v<version>/` URL is used by the npm CLI and cask — intentional and consistent with the spec's versioning section.
 - **Cross-language duplication:** the LaunchAgent plist appears in the template (Task 4), install.sh (Task 5), launchagent.js (Task 7), and the cask (Task 10). This is intentional — the installers run detached from a repo checkout and in different languages, so a single shared file is not reachable. All copies use the same label, RunAtLoad, and KeepAlive.
-```
+
+## Post-implementation deltas
+
+The shipped code is the source of truth. During the two-stage review the
+following hardening was added beyond the task snippets above (the snippets are
+left as the original plan for the record):
+
+- `install.sh`: uses the absolute `/usr/bin/xattr` instead of bare `xattr`. A
+  PyPI `xattr` shim on `PATH` lacks the `-r` flag and would silently fail to
+  strip the quarantine attribute, re-triggering the Gatekeeper warning. (Task 5)
+- `install.sh`: the final echo drops the emoji (project rule: no emojis). (Task 5)
+- `npm/package.json`: adds `"engines": { "node": ">=22" }`. (Task 7)
+- `npm/lib/download.js`: `fetch` takes a redirect budget (default 5) and rejects
+  on too many redirects, preventing an unbounded recursion. (Task 7)
+- `npm/lib/launchagent.js`: `renderPlist` XML-escapes the executable path. (Task 7)
+- `npm/lib/install.js`: guards a malformed/empty SHA-256 file, asserts the
+  extracted `PowerMenu.app` exists before rename, and makes the final `open`
+  non-fatal so a launch failure does not mask a successful install. (Task 7)

@@ -5,7 +5,7 @@ can be tuned for 24/7 Claude Code Remote Control without opening System Settings
 
 ## What it does
 
-- Menu-bar item (⚡) with two submenus:
+- Menu-bar item (a bolt icon, the `bolt.circle` SF Symbol) with two submenus:
   - **Turn display off after**: 1 / 2 / 5 / 10 / 15 / 30 min / Never
   - **Sleep after**: 30 / 60 / 90 / 120 / 180 min / Never
 - "Sleep: Never" == keep-awake (sets `pmset -c sleep 0`).

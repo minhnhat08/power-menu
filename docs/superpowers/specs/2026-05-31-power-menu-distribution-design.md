@@ -128,8 +128,9 @@ and removes the plist.
 curl -fsSL https://raw.githubusercontent.com/minhnhat08/power-menu/main/install.sh | bash
 ```
 
-Steps: assert macOS; fetch latest release metadata via the GitHub API; download
-`PowerMenu.app.zip`; verify SHA-256 against the checksum asset; unzip into
+Steps: assert macOS; download `PowerMenu.app.zip` from the
+`/releases/latest/download/` redirect (no GitHub API call, no `jq`); verify
+SHA-256 against the checksum asset; unzip into
 `~/Applications/PowerMenu.app` (replacing any existing install); strip
 quarantine; generate and load the LaunchAgent; launch the app. A matching
 `uninstall.sh` reverses every step.
@@ -216,4 +217,3 @@ not part of this repository's structure.
 - Windows/Linux support.
 - In-app auto-update (updates happen via re-running the installer or
   `brew upgrade`).
-```
