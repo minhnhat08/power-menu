@@ -45,14 +45,7 @@ Uninstall:
 curl -fsSL https://raw.githubusercontent.com/minhnhat08/power-menu/main/uninstall.sh | bash
 ```
 
-### npx
-
-```bash
-npx power-menu              # install
-npx power-menu uninstall    # remove
-```
-
-All three install to `~/Applications/PowerMenu.app`, register a LaunchAgent at
+Both install to `~/Applications/PowerMenu.app`, register a LaunchAgent at
 `~/Library/LaunchAgents/com.minhnhat.powermenu.plist` (so "Start at login"
 works), and launch the app.
 

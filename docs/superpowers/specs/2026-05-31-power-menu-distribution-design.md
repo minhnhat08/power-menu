@@ -4,6 +4,11 @@
 - **Status:** Approved
 - **Scope:** Packaging, distribution, and UI localization. No new app features.
 
+> **Update 2026-06-01:** The npm/npx channel was dropped after launch to avoid
+> npm token-expiration maintenance for a tool that does not fit the npm registry
+> well. Shipped channels are **Homebrew** and the **install script** only.
+> References to the npm package / `npx` below are historical.
+
 ## Problem
 
 PowerMenu is a macOS menu-bar app (single-file Swift, `main.swift`) that can

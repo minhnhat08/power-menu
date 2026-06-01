@@ -1,5 +1,10 @@
 # PowerMenu Distribution Implementation Plan
 
+> **Update 2026-06-01:** The npm/npx channel (Task 7 and the `publish-npm` CI
+> job) was dropped after launch to avoid npm token maintenance. The `npm/`
+> package was removed and shipped channels are **Homebrew** and the **install
+> script** only. Task 7 and npm references below are historical.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Make PowerMenu installable on any Mac via an install script, Homebrew tap, and `npx`, all consuming one universal ad-hoc-signed GitHub Release artifact, with the UI translated to English.
