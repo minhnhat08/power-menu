@@ -33,9 +33,6 @@ brew install --cask minhnhat08/tap/power-menu
 
 Updates come with `brew upgrade`.
 
-> Available once the `minhnhat08/homebrew-tap` cask is published. Until then,
-> use the install script or `npx` below.
-
 ### Install script
 
 ```bash
